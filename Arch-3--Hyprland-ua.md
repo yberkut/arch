@@ -9,13 +9,13 @@
 sudo pacman -Rns nvidia nvidia-utils nvidia-settings
 
 # 2. Встановлення nvidia-dkms
-sudo pacman -S nvidia-dkms nvidia-utils nvidia-settings nvidia-vaapi-driver
+sudo pacman -S nvidia-dkms nvidia-utils nvidia-settings
 
-# 3. Встановимо mesa і lib32-mesa, бо Wayland використовує загальні бібліотеки рендерингу
-sudo pacman -S mesa lib32-mesa
+# 3. Встановимо mesa, бо Wayland використовує загальні бібліотеки рендерингу
+sudo pacman -S mesa mesa-utils
 
-# 4. Переконайся, що модуль nvidia_drm завантажується з modeset=1 для Wayland:
-echo "options nvidia_drm modeset=1" | sudo tee /etc/modprobe.d/nvidia.conf
+# 4. Переконайся, що модуль nvidia-drm завантажується з modeset=1 для Wayland:
+echo "options nvidia-drm modeset=1" | sudo tee /etc/modprobe.d/nvidia.conf
 ```
 
 ### 1. Встановлення Hyprland та необхідного ПО
