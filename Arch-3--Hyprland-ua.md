@@ -21,8 +21,7 @@ echo "options nvidia-drm modeset=1" | sudo tee /etc/modprobe.d/nvidia.conf
 ### 1. Встановлення Hyprland та необхідного ПО
 
 ```bash
-sudo pacman -S hyprland waybar wofi mako xdg-desktop-portal-hyprland qt5-wayland qt6-wayland \
-                pipewire pipewire-pulse wireplumber swaylock swayidle grim slurp
+sudo pacman -S hyprland waybar wofi mako xdg-desktop-portal-hyprland qt5-wayland qt6-wayland pipewire pipewire-pulse wireplumber swaylock swayidle grim slurp
 ```
 
 Це:
