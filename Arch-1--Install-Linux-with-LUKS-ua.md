@@ -128,7 +128,7 @@ grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB --mod
 
 # Редагуємо GRUB-конфіг (/etc/default/grub)
 GRUB_ENABLE_CRYPTODISK=y
-sed -i "s|^GRUB_CMDLINE_LINUX=\".*\"|GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$(blkid -s UUID -o value /dev/nvme0n1p2):cryptroot root=/dev/mapper/vg0-root\"|" /etc/default/grub
+sed -i "s|^GRUB_CMDLINE_LINUX=\".*\"|GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$(blkid -s UUID -o value /dev/nvme0n1p2):cryptroot root=/dev/mapper/vg0-root rw\"|" /etc/default/grub
 
 # Перевіряємо, що заміна пройшла успішно
 grep "GRUB_CMDLINE_LINUX" /etc/default/grub
