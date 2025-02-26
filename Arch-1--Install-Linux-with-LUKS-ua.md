@@ -120,6 +120,33 @@ HOOKS=(base udev autodetect modconf block keyboard keymap consolefont encrypt lv
 mkinitcpio -P
 ```
 
+### Встановлення завантажувача `systemd-boot`
+
+```bash
+https://wiki.archlinux.org/title/Systemd-boot#Installation
+
+# Видаляємо GRUB
+pacman -Rns grub
+
+# Встановлюємо systemd-boot
+bootctl install
+
+# Редагуємо /boot/loader/loader.conf
+default arch
+timeout 3
+console-mode max
+
+# Створюємо запис для ядра в /boot/loader/entries/arch.conf:
+title   Arch Linux
+linux   /vmlinuz-linux
+initrd  /initramfs-linux.img
+options cryptdevice=UUID=<твій_UUID>:vg0-root root=/dev/mapper/vg0-root rw
+
+# Оновлюємо initramfs:
+mkinitcpio -P
+# Після цього перезавантажуєшся, і Arch Linux має завантажитися через systemd-boot.
+```
+
 ### Встановлення GRUB із підтримкою LUKS
 
 ```bash
