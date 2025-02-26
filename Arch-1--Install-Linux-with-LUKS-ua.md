@@ -124,7 +124,7 @@ mkinitcpio -P
 
 ```bash
 pacman -S grub efibootmgr
-grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB --modules="cryptodisk luks gzio part_gpt --recheck"
+grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB --modules="cryptodisk luks gzio part_gpt" --recheck
 
 # Редагуємо GRUB-конфіг (/etc/default/grub)
 GRUB_ENABLE_CRYPTODISK=y
