@@ -72,7 +72,7 @@ mount /dev/vg0/root /mnt
 mkdir -p /mnt/{efi,home,var/lib/libvirt/images}
 mount /dev/vg0/home /mnt/home
 mount /dev/vg0/vms /mnt/var/lib/libvirt/images
-mount --mkdir /dev/nvme0n1p1 /mnt/efi
+mount /dev/nvme0n1p1 /mnt/efi
 swapon /dev/vg0/swap
 # Перевіряємо, що в нас вийшло :)
 lsblk -f
