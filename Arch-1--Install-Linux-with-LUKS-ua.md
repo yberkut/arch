@@ -35,10 +35,10 @@ sgdisk --zap-all /dev/nvme0n1
 parted /dev/nvme0n1 mklabel gpt
 parted /dev/nvme0n1 mkpart "EFI" fat32 1MiB 512MiB
 parted /dev/nvme0n1 set 1 esp on
-parted /dev/nvme0n1 mkpart "LUKS" 512MiB 100%
+parted /dev/nvme0n1 mkpart "LUKS" 513MiB 100%
 
 # Створюємо LUKS-контейнер
-cryptsetup luksFormat --typeluks2 /dev/nvme0n1p2
+cryptsetup luksFormat --type luks2 /dev/nvme0n1p2
 # Відкриваємо LUKS-контейнер
 cryptsetup open /dev/nvme0n1p2 cryptroot
 
@@ -47,10 +47,14 @@ pvcreate /dev/mapper/cryptroot
 vgcreate vg0 /dev/mapper/cryptroot
 lvcreate -L 150G vg0 -n root
 lvcreate -L 500G vg0 -n vms # для віртуальних машин
-lvcreate -L 64G vg0 -n swap 
-lvcreate -l 100%FREE-50G vg0 -n home # залишаємо 50G під LVM снапшоти
+lvcreate -L 64G vg0 -n swap
+# Перевіряємо скільки лишилось вільного місця в VG
+vgs
+# Визначаємо розмір, необхідний для home ("вільне місце"-50G, 239G-50G=189G)
+# Створюємо home розміром 189G
+lvcreate -L 189G vg0 -n home # залишаємо 50G під LVM снапшоти
 # Перевіряємо вільне місце у VG
-vgdisplay vg0
+vgs # має показати 50G
 
 # Форматуємо розділи
 mkfs.vfat -F32 /dev/nvme0n1p1
@@ -90,10 +94,10 @@ nano /etc/pacman.conf
 
 ```bash
 # Встановлюємо базову систему
-pacstrap /mnt base base-devel linux linux-firmware linux-headers bash-completion vim nano git curl neofetch networkmanager lvm2
+pacstrap -K /mnt base base-devel linux linux-firmware linux-headers bash-completion vim nano git curl neofetch networkmanager lvm2
 
 # Якщо потрібні пропрієтарні NVIDIA-драйвери
-pacstrap /mnt nvidia-dkms nvidia-utils nvidia-settings
+pacstrap -K /mnt nvidia-dkms nvidia-utils nvidia-settings
 
 # Налаштування fstab
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -110,7 +114,7 @@ arch-chroot /mnt
 vim /etc/mkinitcpio.conf
 
 # У `HOOKS=()`, змінюємо на
-HOOKS=(base udev autodetect modconf block keyboard keymap encrypt lvm2 filesystems fsck)
+HOOKS=(base udev autodetect modconf block keyboard keymap consolefont encrypt lvm2 filesystems fsck)
 
 # Зберігаємо файл і оновлюємо `initramfs`
 mkinitcpio -P
@@ -122,7 +126,8 @@ mkinitcpio -P
 pacman -S grub efibootmgr
 grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB --modules="cryptodisk luks gzio part_gpt"
 
-# Редагуємо GRUB-конфіг
+# Редагуємо GRUB-конфіг (/etc/default/grub)
+GRUB_ENABLE_CRYPTODISK=y
 sed -i "s|^GRUB_CMDLINE_LINUX=\".*\"|GRUB_CMDLINE_LINUX=\"cryptdevice=UUID=$(blkid -s UUID -o value /dev/nvme0n1p2):cryptroot root=/dev/mapper/vg0-root\"|" /etc/default/grub
 
 # Перевіряємо, що заміна пройшла успішно
